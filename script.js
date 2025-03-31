@@ -3,7 +3,6 @@ const appIdcuenta = '1390954715416997';
 const scopepagina = 'pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
 const scopecuenta = 'public_profile,email'; 
 
-
 function initFacebookSDK(appId) {
     FB.init({
         appId            : appId, 

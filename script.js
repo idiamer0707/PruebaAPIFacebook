@@ -1,48 +1,77 @@
-// Configuración del botón de inicio de sesión
-document.getElementById('loginButton').addEventListener('click', () => {
-    const appId = '1862052411210390'; 
-    const redirectUri = 'https://idiamer0707.github.io/PruebaAPIFacebook/'; 
-    const scope = 'pages_show_list,business_management,pages_read_engagement,pages_read_user_content,pages_manage_posts';
+const appIdpagina = '1862052411210390'; 
+const appIdcuenta = '1390954715416997';  
+const scopepagina = 'pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
+const scopecuenta = 'public_profile,email'; 
 
-   
-    const authUrl = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=token`;
 
-    
-    window.location.href = authUrl;
+function initFacebookSDK(appId) {
+    FB.init({
+        appId            : appId, 
+        cookie           : true,   
+        xfbml            : true,    
+        version          : 'v22.0'   
+    });
+    console.log(`SDK inicializado con App ID: ${appId}`);
+}
+
+function loginWithAccount(appId) {
+    initFacebookSDK(appId); 
+    FB.login(function(response) {
+        if (response.authResponse) {
+            console.log('Usuario autenticado correctamente:', response);
+            const token = response.authResponse.accessToken;
+            console.log('Token de acceso (Cuenta):', token);
+
+            FB.api('/me?fields=id,name', function(accountData) {
+                if (accountData && !accountData.error) {
+                    console.log('Datos de la cuenta:', accountData);
+                    document.getElementById('nombre').innerText = `Nombre: ${accountData.name}`;
+                    document.getElementById('id').innerText = `ID: ${accountData.id}`;
+                } else {
+                    console.error('Error al obtener datos de la cuenta:', accountData.error);
+                }
+            });
+        } else {
+            console.log('Autenticación cancelada.');
+        }
+    }, { scope: scopecuenta }); 
+}
+
+
+function loginWithPage(appId) {
+    initFacebookSDK(appId); 
+    FB.login(function(response) {
+        if (response.authResponse) {
+            console.log('Usuario autenticado correctamente:', response);
+            const token = response.authResponse.accessToken;
+            console.log('Token de acceso (Página):', token);
+
+            FB.api('/me/accounts', function(pageData) {
+                if (pageData && !pageData.error) {
+                    console.log('Datos de las páginas administradas:', pageData.data);
+
+                    const page = pageData.data[0]; 
+                    if (page) {
+                        document.getElementById('idpage').innerText = `ID de la página: ${page.id}, Nombre: ${page.name}`;
+                    } else {
+                        document.getElementById('idpage').innerText = 'No se encontraron páginas administradas.';
+                    }
+                } else {
+                    console.error('Error al obtener datos de las páginas:', pageData.error);
+                }
+            });
+        } else {
+            console.log('Autenticación cancelada.');
+        }
+    }, { scope: scopepagina }); 
+}
+
+
+document.getElementById('logincuenta').addEventListener('click', () => {
+    loginWithAccount(appIdpagina);
 });
 
-window.onload = function() {
-    const hash = window.location.hash;
-    const token = new URLSearchParams(hash.substring(1)).get('access_token');
+document.getElementById('loginpagina').addEventListener('click', () => {
+    loginWithPage(appIdcuenta);
+});
 
-    if (token) {
-        console.log('Token de acceso:', token);
-        getPagesData(token); 
-    } else {
-        console.error('No se obtuvo el token de acceso.');
-    }
-};
-
-// Consulta las páginas administradas
-function getPagesData(accessToken) {
-    const url = `https://graph.facebook.com/v22.0/me/accounts?access_token=${accessToken}`;
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data && !data.error) {
-                const pages = data.data;
-                console.log('Páginas administradas:');
-
-                const output = document.getElementById('idapp');
-                output.innerHTML = ''; 
-                pages.forEach(page => {
-                    const pageInfo = `ID: ${page.id}, Nombre: ${page.name}`;
-                    output.innerHTML += `${pageInfo}<br>`;
-                });
-            } else {
-                console.error('Error al obtener las páginas:', data.error);
-            }
-        })
-        .catch(error => console.error('Error en la solicitud:', error));
-}

@@ -29,7 +29,7 @@ function getPagesData() {
             
             pages.forEach(page => {
                 console.log(`ID de la página: ${page.id}, Nombre: ${page.name}`);
-                document.getElementById(idapp).innerText=`ID: ${page.id}, Nombre: ${page.name}`;
+                document.getElementById('idapp').innerText=`ID: ${page.id}, Nombre: ${page.name}`;
             });
         } else {
             console.error('Error al obtener las páginas:', response.error);

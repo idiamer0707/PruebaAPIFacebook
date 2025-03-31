@@ -1,43 +1,48 @@
-const baseURL = "https://graph.facebook.com/v22.0";
-const accessToken = "EAAadhtyFZBpYBOzAEZB5iMZCAoUqmiy7zBAybSXL9IR9fThPdh7Y83vlaiJbElB0ksSRxGp7uAGBT2xqVVPqskKVEhBZA7JaZAhZBy5rNUfLAqejV162Mwzl6q3jz3OUFW9ulZCF6DIoGJxPE9exPIGweQvuWLiDv0hE8u0SgjuSe2hRWW7sJCWLzzaUHRZCFZAfqOjLuPLlSHWdBMyAZAvFM21QixTAZDZD"; 
+// Configuración del botón de inicio de sesión
+document.getElementById('loginButton').addEventListener('click', () => {
+    const appId = '1862052411210390'; 
+    const redirectUri = 'https://idiamer0707.github.io/PruebaAPIFacebook/'; 
+    const scope = 'pages_show_list,business_management,pages_read_engagement,pages_read_user_content,pages_manage_posts';
 
-window.fbAsyncInit = function() {
-    FB.init({
-        appId            : '1862052411210390', 
-        xfbml            : true,
-        version          : 'v22.0'
-    });
+   
+    const authUrl = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=token`;
+
+    
+    window.location.href = authUrl;
+});
+
+window.onload = function() {
+    const hash = window.location.hash;
+    const token = new URLSearchParams(hash.substring(1)).get('access_token');
+
+    if (token) {
+        console.log('Token de acceso:', token);
+        getPagesData(token); 
+    } else {
+        console.error('No se obtuvo el token de acceso.');
+    }
 };
 
-function loginWithFacebook() {
-    FB.login(function(response) {
-        if (response.authResponse) {
-            console.log('Usuario autenticado correctamente:', response);
-            getPagesData(); 
-        } else {
-            console.log('Autenticación cancelada o fallida.');
-        }
-    }, { scope: 'pages_show_list,business_management,pages_read_engagement,pages_read_user_content,pages_manage_posts' });
-}
+// Consulta las páginas administradas
+function getPagesData(accessToken) {
+    const url = `https://graph.facebook.com/v22.0/me/accounts?access_token=${accessToken}`;
 
-function getPagesData() {
-    // Consulta las páginas administradas por el usuario
-    FB.api('/me/accounts', function(response) {
-        if (response && !response.error) {
-            const pages = response.data;
-            console.log('Páginas administradas:');
-            
-            pages.forEach(page => {
-                console.log(`ID de la página: ${page.id}, Nombre: ${page.name}`);
-                document.getElementById('idapp').innerText=`ID: ${page.id}, Nombre: ${page.name}`;
-            });
-        } else {
-            console.error('Error al obtener las páginas:', response.error);
-        }
-    });
-}
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && !data.error) {
+                const pages = data.data;
+                console.log('Páginas administradas:');
 
-// Asocia el botón de inicio de sesión para realizar la acción
-document.getElementById('loginButton').addEventListener('click', () => {
-    loginWithFacebook();
-});
+                const output = document.getElementById('idapp');
+                output.innerHTML = ''; 
+                pages.forEach(page => {
+                    const pageInfo = `ID: ${page.id}, Nombre: ${page.name}`;
+                    output.innerHTML += `${pageInfo}<br>`;
+                });
+            } else {
+                console.error('Error al obtener las páginas:', data.error);
+            }
+        })
+        .catch(error => console.error('Error en la solicitud:', error));
+}

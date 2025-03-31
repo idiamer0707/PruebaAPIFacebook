@@ -26,9 +26,10 @@ function getPagesData() {
         if (response && !response.error) {
             const pages = response.data;
             console.log('Páginas administradas:');
-            document.getElementById(idapp).innerText=pages.id
+            
             pages.forEach(page => {
                 console.log(`ID de la página: ${page.id}, Nombre: ${page.name}`);
+                document.getElementById(idapp).innerText=`ID: ${page.id}, Nombre: ${page.name}`;
             });
         } else {
             console.error('Error al obtener las páginas:', response.error);

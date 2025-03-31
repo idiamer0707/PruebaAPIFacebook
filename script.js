@@ -68,10 +68,11 @@ function loginWithPage(appId) {
 
 
 document.getElementById('logincuenta').addEventListener('click', () => {
-    loginWithAccount(appIdpagina);
+    loginWithAccount(appIdcuenta);
 });
 
 document.getElementById('loginpagina').addEventListener('click', () => {
-    loginWithPage(appIdcuenta);
+    loginWithPage(appIdpagina);
 });
+
 

@@ -22,7 +22,7 @@ function loginWithAccount(appId) {
             const token = response.authResponse.accessToken;
             console.log('Token de acceso (Cuenta):', token);
 
-            FB.api('/me/post', function(accountData) {
+            FB.api('/me/posts', function(accountData) {
                 if (accountData && !accountData.error) {
                     console.log('Datos de la cuenta:', accountData);
                     document.getElementById('nombre').innerText = `Nombre: ${accountData.id}`;

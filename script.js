@@ -94,7 +94,6 @@ function loginWithPage(appId) {
     }, { scope: 'pages_read_engagement,pages_read_user_content' });
 }
 
-
 document.getElementById('logincuenta').addEventListener('click', () => {
     loginWithAccount(appIdcuenta);
 });

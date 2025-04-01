@@ -79,7 +79,6 @@ function loginWithPage(appId) {
                                 console.error('Error al recibir la lista de posts:', postList.error);
                             }
 
-                            
                         });
                     } else {
                         document.getElementById('pageid').innerText = 'No se encontraron páginas administradas.';

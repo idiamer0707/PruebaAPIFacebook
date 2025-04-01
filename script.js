@@ -38,7 +38,6 @@ async function loginWithPage(appId) {
                         else reject(data.error);
                     });
                 });
-
                 if (pageData && pageData.instagram_business_account) {
                     
                     const followers = pageData.followers_count;

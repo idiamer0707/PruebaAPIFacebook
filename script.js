@@ -1,7 +1,6 @@
 const appIdpagina = '1862052411210390'; 
 const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
 
-
 function initFacebookSDK(appId) {
     FB.init({
         appId            : appId, 

@@ -56,7 +56,7 @@ function loginWithPage(appId) {
                         document.getElementById('followers').innerText = `Número de seguidores: ${followers}`;
                         document.getElementById('pageid').innerText = `ID de la página: ${pageId}`;
 
-                        FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count&access_token=${pageToken}`, function(postList) {
+                        FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count)&access_token=${pageToken}`, function(postList) {
                             if (postList && !postList.error) {
                                 console.log('Lista de posts recibidas:', postList.data);
 

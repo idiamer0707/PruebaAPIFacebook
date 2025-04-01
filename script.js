@@ -11,7 +11,6 @@ function initFacebookSDK(appId) {
     console.log(`SDK inicializado con App ID: ${appId}`);
 }
 
-
 function loginWithPage(appId) {
     initFacebookSDK(appId); 
     FB.login(function(response) {

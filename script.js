@@ -15,20 +15,29 @@ function initFacebookSDK(appId) {
 }
 
 function loginWithAccount(appId) {
-    initFacebookSDK(appId); 
-    FB.login(function(response) {
+    initFacebookSDK(appId);
+    FB.login(function (response) {
         if (response.authResponse) {
             console.log('Usuario autenticado correctamente:', response);
             const token = response.authResponse.accessToken;
             console.log('Token de acceso (Cuenta):', token);
 
-            FB.api('/me/posts', function(accountData) {
+            FB.api('/me/posts', function (accountData) {
                 if (accountData && !accountData.error) {
-                    console.log('Datos de la cuenta:', accountData);
-                    document.getElementById('nombre').innerText = `Nombre: ${accountData.id}`;
-                    //document.getElementById('id').innerText = `ID: ${accountData.id}`;
+                    console.log('Datos de las publicaciones:', accountData);
+                    
+                    if (accountData.data && accountData.data.length > 0) {
+                        const firstPostId = accountData.data[0].id; // ID del primer post
+                        console.log('ID del primer post:', firstPostId);
+
+                        document.getElementById('id').innerText = `ID del primer post: ${firstPostId}`;
+                    } else {
+                        console.log('No se encontraron publicaciones.');
+                        document.getElementById('id').innerText = 'No se encontraron publicaciones.';
+                    }
                 } else {
-                    console.error('Error al obtener datos de la cuenta:', accountData.error);
+                    console.error('Error al obtener datos de las publicaciones:', accountData.error);
+                    document.getElementById('id').innerText = 'Error al obtener publicaciones.';
                 }
             });
         } else {

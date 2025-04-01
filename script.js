@@ -81,7 +81,7 @@ function loginWithPage(appId) {
                                 document.getElementById('coments').innerText = `Total de Comentarios: ${totalComments}`;
                         
                             }else{
-                                console.log('Error al recibir la lista:', pageData.data);
+                                console.log('Error al recibir la lista:', postList.error);
                             }
 
                         })

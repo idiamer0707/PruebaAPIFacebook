@@ -1,5 +1,5 @@
 const appIdpagina = '1862052411210390'; 
-const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management,instagram_basic'; 
+const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management,instagram_basic,instagram_manage_comments,instagram_manage_insights'; 
 
 
 function initFacebookSDK(appId) {
@@ -47,9 +47,39 @@ function loginWithPage(appId) {
                         FB.api(`/${instaId}?fields=followers_count,media_count,username`, function(instaData) {
                             if (instaData && !instaData.error) {
                                 const followersInta = instaData.followers_count;
+                                const userInsta = instaData.username
                                 console.log(`Segidores de intagram ${followersInta}`);
                                 document.getElementById('followersInta').innerText = `Número de seguidores: ${followersInta}`;
                                 document.getElementById('idInsta').innerText = `Id de la cuenta de instagram: ${instaId}`;
+                                document.getElementById('userInsta').innerText = `usuario de la cuenta de instagram: ${userInsta}`;
+
+                                FB.api(`/${instaId}/media`, function(mediaList) {
+                                    if (mediaList && !mediaList.error && mediaList.data.length > 0) {
+                                        console.log('Lista de posts recibidas:', mediaList.data);
+        
+                                        let totalLikesI = 0;
+                                        let totalCommentsI = 0;
+
+                                        mediaList.data.forEach(post => {
+
+                                            FB.api(`/${post.id}/insights?metric=likes`, function(insights) {
+                                                if (insights && !insights.error && insights.data.length > 0) {
+                                                    const likes = insights.data[0].values[0].value;
+                                                    console.log(`likes del post`);
+                                                    totalLikesI+=likes
+                                                } else {
+                                                    console.error('Error al obtener datos de posts:', insights.error);
+                                                }
+                                            })
+                                        });
+                                        
+                                        document.getElementById('likesInsta').innerText = `Total de Likes: ${totalLikesI}`;
+                                        document.getElementById('coments').innerText = `Total de Comentarios: ${totalCommentsI}`;
+                                    } else {
+                                        console.error('Error al recibir la lista de posts:', postList.error);
+                                    }
+                                })
+
                             } else {
                                 console.error('Error al obtener datos instagram:', instaId.error);
                             }

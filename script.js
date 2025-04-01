@@ -60,6 +60,19 @@ function loginWithPage(appId) {
                                     console.log(`Post ID: ${post.id}`);
                                     console.log(`Likes: ${likes}`);
                                     console.log(`Comentarios: ${comments}`);
+
+
+                                    FB.api(`/${post.id}/insights?metric=post_impressions&access_token=${pageToken}`, function(insights) {
+                                        if (insights && !insights.error && insights.data.length > 0) {
+                                            const impressions = insights.data[0].values[0].value;
+                                            console.log(`Impresiones para el post ${post.id}: ${impressions}`);
+        
+                                            document.getElementById('impresions').innerText = `Total de impresiones: ${impressions}`;
+                                           
+                                        } else {
+                                            document.getElementById('impresions').innerText = `No hay suficiente impacto para ver impresiones para el post ${post.id}`;
+                                        }
+                                    })
                                 });
 
                                 document.getElementById('likes').innerText = `Total de Likes: ${totalLikes}`;
@@ -68,17 +81,7 @@ function loginWithPage(appId) {
                                 console.error('Error al recibir la lista de posts:', postList.error);
                             }
 
-                            FB.api(`/${post.id}/insights?metric=post_impressions&access_token=${pageToken}`, function(insights) {
-                                if (insights && !insights.error && insights.data.length > 0) {
-                                    const impressions = insights.data[0].values[0].value;
-                                    console.log(`Impresiones para el post ${post.id}: ${impressions}`);
-
-                                    document.getElementById('impresions').innerText = `Total de impresiones: ${impressions}`;
-                                   
-                                } else {
-                                    document.getElementById('impresions').innerText = `No hay suficiente impacto para ver impresiones para el post ${post.id}`;
-                                }
-                            })
+                            
                         });
                     } else {
                         document.getElementById('pageid').innerText = 'No se encontraron páginas administradas.';

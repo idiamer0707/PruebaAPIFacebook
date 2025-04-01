@@ -1,14 +1,15 @@
 const appIdpagina = '1862052411210390'; 
 const appIdcuenta = '1390954715416997';  
 const scopepagina = 'pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
-const scopecuenta = 'public_profile,email'; 
+const scopecuenta = 'public_profile,email,user_gender,user_location,user_link,user_posts'; 
+
 
 function initFacebookSDK(appId) {
     FB.init({
         appId            : appId, 
         cookie           : true,   
         xfbml            : true,    
-        version          : 'v22.0'   
+        version          : 'v2.5'   
     });
     console.log(`SDK inicializado con App ID: ${appId}`);
 }
@@ -21,11 +22,11 @@ function loginWithAccount(appId) {
             const token = response.authResponse.accessToken;
             console.log('Token de acceso (Cuenta):', token);
 
-            FB.api('/me?fields=id,name', function(accountData) {
+            FB.api('/me/post', function(accountData) {
                 if (accountData && !accountData.error) {
                     console.log('Datos de la cuenta:', accountData);
-                    document.getElementById('nombre').innerText = `Nombre: ${accountData.name}`;
-                    document.getElementById('id').innerText = `ID: ${accountData.id}`;
+                    document.getElementById('nombre').innerText = `Nombre: ${accountData.id}`;
+                    //document.getElementById('id').innerText = `ID: ${accountData.id}`;
                 } else {
                     console.error('Error al obtener datos de la cuenta:', accountData.error);
                 }
@@ -73,5 +74,4 @@ document.getElementById('logincuenta').addEventListener('click', () => {
 document.getElementById('loginpagina').addEventListener('click', () => {
     loginWithPage(appIdpagina);
 });
-
 

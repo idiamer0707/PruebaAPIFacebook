@@ -1,5 +1,5 @@
 const appIdpagina = '1862052411210390'; 
-const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
+const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management,instagram_basic'; 
 
 
 function initFacebookSDK(appId) {
@@ -31,7 +31,7 @@ function loginWithPage(appId) {
                 }
             });
 
-            FB.api('/me/accounts?fields=access_token,followers_count', function(pageData) {
+            FB.api('/me/accounts?fields=access_token,followers_count,instagram_business_account', function(pageData) {
                 if (pageData && !pageData.error) {
                     console.log('Datos de las páginas administradas:', pageData.data);
                     const page = pageData.data[0]; 
@@ -39,9 +39,21 @@ function loginWithPage(appId) {
                         const pageToken = page.access_token; 
                         const followers = page.followers_count;
                         const pageId = page.id;
+                        const instaId = page.instagram_business_account.id
 
                         document.getElementById('followers').innerText = `Número de seguidores: ${followers}`;
                         document.getElementById('pageid').innerText = `ID de la página: ${pageId}`;
+
+                        FB.api(`/${instaId}?fields=followers_count,media_count,username`, function(instaData) {
+                            if (instaData && !instaData.error) {
+                                const followersInta = instaData.followers_count;
+                                console.log(`Segidores de intagram ${followersInta}`);
+                                document.getElementById('followersInta').innerText = `Número de seguidores: ${followersInta}`;
+                                document.getElementById('idInsta').innerText = `Id de la cuenta de instagram: ${instaId}`;
+                            } else {
+                                console.error('Error al obtener datos instagram:', instaId.error);
+                            }
+                        })
 
                         FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count)&access_token=${pageToken}`, function(postList) {
                             if (postList && !postList.error) {
@@ -103,4 +115,3 @@ function loginWithPage(appId) {
 document.getElementById('loginpagina').addEventListener('click', () => {
     loginWithPage(appIdpagina);
 });
-

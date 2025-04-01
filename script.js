@@ -49,6 +49,7 @@ function loginWithPage(appId) {
                     console.log('Datos de las páginas administradas:', pageData.data);
                     const page = pageData.data[0]; 
                     if (page) {
+                        
                         const pageToken = page.access_token; 
                         const followers = page.followers_count;
                         const pageId = page.id;

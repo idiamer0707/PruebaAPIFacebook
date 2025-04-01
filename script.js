@@ -1,7 +1,6 @@
 const appIdpagina = '1862052411210390'; 
-const appIdcuenta = '1390954715416997';  
-const scopepagina = 'pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
-const scopecuenta = 'public_profile,email,user_gender,user_location,user_link'; 
+const scopepagina = 'public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
+
 
 function initFacebookSDK(appId) {
     FB.init({
@@ -13,13 +12,14 @@ function initFacebookSDK(appId) {
     console.log(`SDK inicializado con App ID: ${appId}`);
 }
 
-function loginWithAccount(appId) {
+
+function loginWithPage(appId) {
     initFacebookSDK(appId); 
     FB.login(function(response) {
         if (response.authResponse) {
             console.log('Usuario autenticado correctamente:', response);
             const token = response.authResponse.accessToken;
-            console.log('Token de acceso (Cuenta):', token);
+            console.log('Token de acceso (Usuario):', token);
 
             FB.api('/me?fields=id,name', function(accountData) {
                 if (accountData && !accountData.error) {
@@ -30,26 +30,12 @@ function loginWithAccount(appId) {
                     console.error('Error al obtener datos de la cuenta:', accountData.error);
                 }
             });
-        } else {
-            console.log('Autenticación cancelada.');
-        }
-    }, { scope: scopecuenta }); 
-}
-
-function loginWithPage(appId) {
-    initFacebookSDK(appId); 
-    FB.login(function(response) {
-        if (response.authResponse) {
-            console.log('Usuario autenticado correctamente:', response);
-            const token = response.authResponse.accessToken;
-            console.log('Token de acceso (Usuario):', token);
 
             FB.api('/me/accounts?fields=access_token,followers_count', function(pageData) {
                 if (pageData && !pageData.error) {
                     console.log('Datos de las páginas administradas:', pageData.data);
                     const page = pageData.data[0]; 
                     if (page) {
-                        
                         const pageToken = page.access_token; 
                         const followers = page.followers_count;
                         const pageId = page.id;
@@ -95,10 +81,8 @@ function loginWithPage(appId) {
     }, { scope: 'pages_read_engagement,pages_read_user_content' });
 }
 
-document.getElementById('logincuenta').addEventListener('click', () => {
-    loginWithAccount(appIdcuenta);
-});
 
 document.getElementById('loginpagina').addEventListener('click', () => {
     loginWithPage(appIdpagina);
 });
+

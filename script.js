@@ -3,6 +3,7 @@ const appIdcuenta = '1390954715416997';
 const scopepagina = 'pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,business_management'; 
 const scopecuenta = 'public_profile,email,user_gender,user_location,user_link'; 
 
+
 function initFacebookSDK(appId) {
     FB.init({
         appId            : appId, 
@@ -36,33 +37,33 @@ function loginWithAccount(appId) {
     }, { scope: scopecuenta }); 
 }
 
-
 function loginWithPage(appId) {
     initFacebookSDK(appId); 
     FB.login(function(response) {
         if (response.authResponse) {
             console.log('Usuario autenticado correctamente:', response);
             const token = response.authResponse.accessToken;
-            console.log('Token de acceso (Página):', token);
+            console.log('Token de acceso (Usuario):', token);
 
-            FB.api('/me/accounts?fields=followers_count', function(pageData) {
+            FB.api('/me/accounts?fields=access_token,followers_count', function(pageData) {
                 if (pageData && !pageData.error) {
                     console.log('Datos de las páginas administradas:', pageData.data);
                     const page = pageData.data[0]; 
                     if (page) {
-                        const folowers= page.followers_count
-                        document.getElementById('followers').innerText = `Numero de seguidores: ${folowers}`;
-                        const pageId= page.id
-                        document.getElementById('pageid').innerText = `Id de la pagina: ${pageId}`;
-                        
-                        FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count)`,function(postList){
+                        const pageToken = page.access_token; 
+                        const followers = page.followers_count;
+                        const pageId = page.id;
+
+                        document.getElementById('followers').innerText = `Número de seguidores: ${followers}`;
+                        document.getElementById('pageid').innerText = `ID de la página: ${pageId}`;
+
+                        FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count&access_token=${pageToken}`, function(postList) {
                             if (postList && !postList.error) {
-                                console.log('Lista de post recibidas:', pageData.data);
+                                console.log('Lista de posts recibidas:', postList.data);
 
                                 let totalLikes = 0;
                                 let totalComments = 0;
 
-                                
                                 postList.data.forEach(post => {
                                     const likes = post.reactions ? post.reactions.summary.total_count : 0;
                                     const comments = post.comments ? post.comments.summary.total_count : 0;
@@ -75,17 +76,14 @@ function loginWithPage(appId) {
                                     console.log(`Comentarios: ${comments}`);
                                 });
 
-                                
                                 document.getElementById('likes').innerText = `Total de Likes: ${totalLikes}`;
                                 document.getElementById('coments').innerText = `Total de Comentarios: ${totalComments}`;
-                        
-                            }else{
-                                console.log('Error al recibir la lista:', postList.error);
+                            } else {
+                                console.error('Error al recibir la lista de posts:', postList.error);
                             }
-
-                        })
+                        });
                     } else {
-                        document.getElementById('idpage').innerText = 'No se encontraron páginas administradas.';
+                        document.getElementById('pageid').innerText = 'No se encontraron páginas administradas.';
                     }
                 } else {
                     console.error('Error al obtener datos de las páginas:', pageData.error);
@@ -94,7 +92,7 @@ function loginWithPage(appId) {
         } else {
             console.log('Autenticación cancelada.');
         }
-    }, { scope: scopepagina }); 
+    }, { scope: 'pages_read_engagement,pages_read_user_content' });
 }
 
 
@@ -105,4 +103,3 @@ document.getElementById('logincuenta').addEventListener('click', () => {
 document.getElementById('loginpagina').addEventListener('click', () => {
     loginWithPage(appIdpagina);
 });
-

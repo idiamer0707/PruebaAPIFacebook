@@ -65,17 +65,21 @@ function loginWithPage(appId) {
 
                                         let totalLikesI = 0;
                                         let totalCommentsI = 0;
+                                        let totalvistasI = 0;
 
                                         const promises = mediaList.data.map(post => {
                                             return new Promise((resolve, reject) => {
-                                                FB.api(`/${post.id}/insights?metric=likes,comments`, function(insights) {
+                                                FB.api(`/${post.id}/insights?metric=likes,comments,views`, function(insights) {
                                                     if (insights && !insights.error && insights.data.length > 0) {
                                                         const likes = insights.data[0].values[0].value;
                                                         const comments = insights.data[1].values[0].value;
+                                                        const vistas = insights.data[2].values[0].value;
                                                         console.log(`Likes del post de insta: ${likes}`);
                                                         console.log(`Comentarios del post de insta: ${comments}`);
+                                                        console.log(`vistas del post de insta: ${vistas}`);
                                                         totalLikesI += likes;
                                                         totalCommentsI += comments;
+                                                        totalvistasI += vistas
                                                         resolve(); 
                                                     } else {
                                                         console.error('Error al obtener datos del post:', insights.error);
@@ -88,6 +92,7 @@ function loginWithPage(appId) {
                                         Promise.all(promises).then(() => {
                                             document.getElementById('likesInsta').innerText = `Total de Likes: ${totalLikesI}`;
                                             document.getElementById('comentsInsta').innerText = `Total de Comentarios: ${totalCommentsI}`;
+                                            document.getElementById('vistasInsta').innerText = `Total de vistas: ${totalvistasI}`;
                                         }).catch(error => {
                                             console.error('Error en la obtención de datos:', error);
                                         });

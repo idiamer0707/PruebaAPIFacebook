@@ -68,11 +68,13 @@ function loginWithPage(appId) {
                                         mediaList.data.forEach(post => {
                                             console.log(`Post ID: ${post.id}`);
 
-                                            FB.api(`/${post.id}/insights?metric=likes`, function(insights) {
+                                            FB.api(`/${post.id}/insights?metric=likes,comments`, function(insights) {
                                                 if (insights && !insights.error && insights.data.length > 0) {
                                                     const likes = insights.data[0].values[0].value;
+                                                    const comments = insights.data[1].values[0].value;
                                                     console.log(`Likes del post: ${likes}`);
                                                     totalLikesI += likes;
+                                                    totalCommentsI += comments;
                                                 } else {
                                                     console.error('Error al obtener datos del post:', insights.error);
                                                 }
@@ -80,7 +82,7 @@ function loginWithPage(appId) {
                                         });
 
                                         document.getElementById('likesInsta').innerText = `Total de Likes: ${totalLikesI}`;
-                                        document.getElementById('coments').innerText = `Total de Comentarios: ${totalCommentsI}`;
+                                        document.getElementById('comentsInsta').innerText = `Total de Comentarios: ${totalCommentsI}`;
                                     } else {
                                         console.error('Error al recibir la lista de posts:', mediaList.error);
                                     }

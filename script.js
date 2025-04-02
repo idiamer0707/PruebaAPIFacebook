@@ -42,6 +42,7 @@ function loginWithPage(appId) {
                         const followers = page.followers_count;
                         const pageId = page.id;
                         const instaId = page.instagram_business_account.id;
+                        console.log(`: ${followersInta}`);
 
                         document.getElementById('followers').innerText = `Número de seguidores: ${followers}`;
                         document.getElementById('pageid').innerText = `ID de la página: ${pageId}`;
@@ -60,7 +61,7 @@ function loginWithPage(appId) {
                                 
                                 FB.api(`/${instaId}/media`, function(mediaList) {
                                     if (mediaList && !mediaList.error && mediaList.data.length > 0) {
-                                        console.log('Lista de posts recibida:', mediaList.data);
+                                        console.log('Lista de posts recibida instagram:', mediaList.data);
 
                                         let totalLikesI = 0;
                                         let totalCommentsI = 0;
@@ -72,7 +73,8 @@ function loginWithPage(appId) {
                                                 if (insights && !insights.error && insights.data.length > 0) {
                                                     const likes = insights.data[0].values[0].value;
                                                     const comments = insights.data[1].values[0].value;
-                                                    console.log(`Likes del post: ${likes}`);
+                                                    console.log(`Likes del post de insta: ${likes}`);
+                                                    console.log(`comentarios del post de insta: ${likes}`);
                                                     totalLikesI += likes;
                                                     totalCommentsI += comments;
                                                 } else {
@@ -95,7 +97,7 @@ function loginWithPage(appId) {
                         
                         FB.api(`/${pageId}/posts?fields=comments.summary(total_count),reactions.summary(total_count)&access_token=${pageToken}`, function(postList) {
                             if (postList && !postList.error) {
-                                console.log('Lista de posts recibida:', postList.data);
+                                console.log('Lista de posts recibida de facebook:', postList.data);
 
                                 let totalLikes = 0;
                                 let totalComments = 0;
@@ -148,4 +150,3 @@ function loginWithPage(appId) {
 document.getElementById('loginpagina').addEventListener('click', () => {
     loginWithPage(appIdpagina);
 });
-
